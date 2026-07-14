@@ -30,7 +30,7 @@ function YearDb() {
   const [status, setStatus] = useState("All");
 
   const filtered = useMemo(() => {
-    return companies.filter((c) => {
+    return companies.filter((c: any) => {
       if (q && !c.name.toLowerCase().includes(q.toLowerCase())) return false;
       if (industry !== "All" && c.industry !== industry) return false;
       if (country !== "All" && c.country !== country) return false;
@@ -91,7 +91,7 @@ function YearDb() {
         </div>
       ) : (
         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-          {filtered.map((c, idx) => (
+          {filtered.map((c: any, idx: number) => (
             <motion.div
               key={c.id}
               initial={{ opacity: 0, y: 8 }}

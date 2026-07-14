@@ -49,7 +49,7 @@ function EventDetail() {
                 className="grid h-16 w-16 place-items-center rounded-2xl text-2xl font-semibold text-white shadow-hover"
                 style={{ background: event.logoColor }}
               >
-                {event.name.split(" ").slice(0, 2).map((w) => w[0]).join("")}
+                {event.name.split(" ").slice(0, 2).map((w: string) => w[0]).join("")}
               </div>
               <div>
                 <h1 className="text-2xl font-semibold sm:text-4xl">{event.name}</h1>
@@ -87,7 +87,7 @@ function EventDetail() {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {event.years.map((y, idx) => (
+          {event.years.map((y: any, idx: number) => (
             <motion.div
               key={y.year}
               initial={{ opacity: 0, y: 10 }}
