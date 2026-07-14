@@ -74,7 +74,7 @@ function EventDetail() {
         <StatCard label="Industries" value={event.industries.length} />
         <StatCard
           label="Countries"
-          value={new Set(event.years.flatMap((y) => y.countries)).size || 12}
+          value={new Set(event.years.flatMap((y: any) => y.countries)).size || 12}
         />
       </div>
 
