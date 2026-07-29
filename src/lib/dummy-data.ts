@@ -104,6 +104,11 @@ function coverUrl(seed: string, size: string) {
   return `https://picsum.photos/seed/${seed}/${size.replace("x", "/")}`;
 }
 
+const YEAR_SPAN = 4;
+function yearsForEvent(latestYear: number) {
+  return Array.from({ length: YEAR_SPAN }, (_, i) => latestYear - (YEAR_SPAN - 1) + i);
+}
+
 function buildCompany(rng: () => number, i: number, eventSlug: string, year: number): Company {
   const name = `${pick(rng, COMPANY_PREFIX)} ${pick(rng, COMPANY_SUFFIX)}`;
   const industry = pick(rng, INDUSTRIES);
@@ -154,7 +159,7 @@ export const EVENTS: Event[] = EVENT_SEEDS.map((seed, idx) => {
   const rng = mulberry32(1000 + idx);
   const years: YearData[] = [];
   const companyMap = new Map<string, Company>();
-  for (const year of [2022, 2023, 2024, 2025]) {
+  for (const year of yearsForEvent(seed.latestYear)) {
     const companies = Array.from({ length: 40 }, (_, i) => buildCompany(rng, i, seed.slug, year));
     companies.forEach(c => companyMap.set(c.id, c));
     years.push({
@@ -174,22 +179,13 @@ export const EVENTS: Event[] = EVENT_SEEDS.map((seed, idx) => {
   };
 });
 
-// Flat company index for quick lookup + event participation cross-refs.
+// Flat company index for quick lookup.
 export const COMPANY_INDEX = new Map<string, Company>();
-export const COMPANY_TO_EVENTS = new Map<string, { event: string; year: number }[]>();
-
-for (const ev of EVENTS) {
-  for (const y of ev.years) {
-    for (const cid of y.companyIds) {
-      // Rebuild company with same rng path so it exists cross-event too.
-    }
-  }
-}
 
 // Populate COMPANY_INDEX by regenerating (deterministic).
 EVENTS.forEach((ev, idx) => {
   const rng = mulberry32(1000 + idx);
-  for (const year of [2022, 2023, 2024, 2025]) {
+  for (const year of yearsForEvent(ev.latestYear)) {
     for (let i = 0; i < 40; i++) {
       const c = buildCompany(rng, i, ev.slug, year);
       c.eventParticipation = [{ event: ev.name, year }];

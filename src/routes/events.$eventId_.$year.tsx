@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { getCompaniesByYear, getEvent, INDUSTRIES, COUNTRIES, SIZES, STATUSES } from "@/lib/dummy-data";
 import { PageShell } from "@/components/page-shell";
 
-export const Route = createFileRoute("/events/$eventId/$year")({
+export const Route = createFileRoute("/events/$eventId_/$year")({
   loader: ({ params }) => {
     const ev = getEvent(params.eventId);
     const yr = Number(params.year);
@@ -30,7 +30,7 @@ function YearDb() {
   const [status, setStatus] = useState("All");
 
   const filtered = useMemo(() => {
-    return companies.filter((c: any) => {
+    return companies.filter((c) => {
       if (q && !c.name.toLowerCase().includes(q.toLowerCase())) return false;
       if (industry !== "All" && c.industry !== industry) return false;
       if (country !== "All" && c.country !== country) return false;
@@ -91,7 +91,7 @@ function YearDb() {
         </div>
       ) : (
         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-          {filtered.map((c: any, idx: number) => (
+          {filtered.map((c, idx) => (
             <motion.div
               key={c.id}
               initial={{ opacity: 0, y: 8 }}

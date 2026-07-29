@@ -9,29 +9,19 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as ProfileRouteImport } from './routes/profile'
-import { Route as DashboardRouteImport } from './routes/dashboard'
-import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AnalyticsRouteImport } from './routes/analytics'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as CompaniesIndexRouteImport } from './routes/companies.index'
-import { Route as EventsEventIdRouteImport } from './routes/events.$eventId'
 import { Route as CompaniesCompanyIdRouteImport } from './routes/companies.$companyId'
-import { Route as EventsEventIdYearRouteImport } from './routes/events.$eventId.$year'
+import { Route as EventsEventIdRouteImport } from './routes/events.$eventId'
+import { Route as EventsEventIdYearRouteImport } from './routes/events.$eventId_.$year'
 
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProfileRoute = ProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AnalyticsRoute = AnalyticsRouteImport.update({
@@ -39,9 +29,19 @@ const AnalyticsRoute = AnalyticsRouteImport.update({
   path: '/analytics',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CompaniesIndexRoute = CompaniesIndexRouteImport.update({
@@ -49,20 +49,20 @@ const CompaniesIndexRoute = CompaniesIndexRouteImport.update({
   path: '/companies/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EventsEventIdRoute = EventsEventIdRouteImport.update({
-  id: '/events/$eventId',
-  path: '/events/$eventId',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const CompaniesCompanyIdRoute = CompaniesCompanyIdRouteImport.update({
   id: '/companies/$companyId',
   path: '/companies/$companyId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EventsEventIdRoute = EventsEventIdRouteImport.update({
+  id: '/events/$eventId',
+  path: '/events/$eventId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EventsEventIdYearRoute = EventsEventIdYearRouteImport.update({
-  id: '/$year',
-  path: '/$year',
-  getParentRoute: () => EventsEventIdRoute,
+  id: '/events/$eventId_/$year',
+  path: '/events/$eventId/$year',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -72,7 +72,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof ProfileRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/companies/$companyId': typeof CompaniesCompanyIdRoute
-  '/events/$eventId': typeof EventsEventIdRouteWithChildren
+  '/events/$eventId': typeof EventsEventIdRoute
   '/companies/': typeof CompaniesIndexRoute
   '/events/$eventId/$year': typeof EventsEventIdYearRoute
 }
@@ -83,7 +83,7 @@ export interface FileRoutesByTo {
   '/profile': typeof ProfileRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/companies/$companyId': typeof CompaniesCompanyIdRoute
-  '/events/$eventId': typeof EventsEventIdRouteWithChildren
+  '/events/$eventId': typeof EventsEventIdRoute
   '/companies': typeof CompaniesIndexRoute
   '/events/$eventId/$year': typeof EventsEventIdYearRoute
 }
@@ -95,9 +95,9 @@ export interface FileRoutesById {
   '/profile': typeof ProfileRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/companies/$companyId': typeof CompaniesCompanyIdRoute
-  '/events/$eventId': typeof EventsEventIdRouteWithChildren
+  '/events/$eventId': typeof EventsEventIdRoute
   '/companies/': typeof CompaniesIndexRoute
-  '/events/$eventId/$year': typeof EventsEventIdYearRoute
+  '/events/$eventId_/$year': typeof EventsEventIdYearRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -132,7 +132,7 @@ export interface FileRouteTypes {
     | '/companies/$companyId'
     | '/events/$eventId'
     | '/companies/'
-    | '/events/$eventId/$year'
+    | '/events/$eventId_/$year'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -142,31 +142,18 @@ export interface RootRouteChildren {
   ProfileRoute: typeof ProfileRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   CompaniesCompanyIdRoute: typeof CompaniesCompanyIdRoute
-  EventsEventIdRoute: typeof EventsEventIdRouteWithChildren
+  EventsEventIdRoute: typeof EventsEventIdRoute
   CompaniesIndexRoute: typeof CompaniesIndexRoute
+  EventsEventIdYearRoute: typeof EventsEventIdYearRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/profile': {
-      id: '/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/analytics': {
@@ -176,11 +163,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AnalyticsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/companies/': {
@@ -190,13 +191,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CompaniesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/events/$eventId': {
-      id: '/events/$eventId'
-      path: '/events/$eventId'
-      fullPath: '/events/$eventId'
-      preLoaderRoute: typeof EventsEventIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/companies/$companyId': {
       id: '/companies/$companyId'
       path: '/companies/$companyId'
@@ -204,27 +198,22 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CompaniesCompanyIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/events/$eventId/$year': {
-      id: '/events/$eventId/$year'
-      path: '/$year'
+    '/events/$eventId': {
+      id: '/events/$eventId'
+      path: '/events/$eventId'
+      fullPath: '/events/$eventId'
+      preLoaderRoute: typeof EventsEventIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/events/$eventId_/$year': {
+      id: '/events/$eventId_/$year'
+      path: '/events/$eventId/$year'
       fullPath: '/events/$eventId/$year'
       preLoaderRoute: typeof EventsEventIdYearRouteImport
-      parentRoute: typeof EventsEventIdRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
-
-interface EventsEventIdRouteChildren {
-  EventsEventIdYearRoute: typeof EventsEventIdYearRoute
-}
-
-const EventsEventIdRouteChildren: EventsEventIdRouteChildren = {
-  EventsEventIdYearRoute: EventsEventIdYearRoute,
-}
-
-const EventsEventIdRouteWithChildren = EventsEventIdRoute._addFileChildren(
-  EventsEventIdRouteChildren,
-)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -233,9 +222,20 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileRoute: ProfileRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   CompaniesCompanyIdRoute: CompaniesCompanyIdRoute,
-  EventsEventIdRoute: EventsEventIdRouteWithChildren,
+  EventsEventIdRoute: EventsEventIdRoute,
   CompaniesIndexRoute: CompaniesIndexRoute,
+  EventsEventIdYearRoute: EventsEventIdYearRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

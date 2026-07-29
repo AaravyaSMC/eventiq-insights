@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { getAllCompanies, INDUSTRIES, COUNTRIES } from "@/lib/dummy-data";
 import { PageShell } from "@/components/page-shell";
@@ -26,6 +26,10 @@ function CompaniesIndex() {
       return true;
     });
   }, [all, q, industry, country]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [q, industry, country]);
 
   const paged = filtered.slice(0, page * perPage);
 

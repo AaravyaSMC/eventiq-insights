@@ -6,7 +6,7 @@ export function useDarkMode() {
   useEffect(() => {
     const saved = typeof window !== "undefined" && localStorage.getItem("eventiq-theme");
     const prefers =
-      typeof window !== "undefined" && window.matchMedia?.("(prefers-color-scheme: dark)").matches;
+      typeof window !== "undefined" && window.matchMedia?.("(prefers-color-scheme: dark)")?.matches;
     const isDark = saved ? saved === "dark" : !!prefers;
     setDark(isDark);
     document.documentElement.classList.toggle("dark", isDark);

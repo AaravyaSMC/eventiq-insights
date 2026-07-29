@@ -1,14 +1,17 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import { ArrowUpRight, Globe, MapPin } from "lucide-react";
-import { getEvent } from "@/lib/dummy-data";
+import { getEvent, getCompaniesByYear } from "@/lib/dummy-data";
 import { PageShell, StatCard } from "@/components/page-shell";
 
 export const Route = createFileRoute("/events/$eventId")({
   loader: ({ params }) => {
     const ev = getEvent(params.eventId);
     if (!ev) throw notFound();
-    return { event: ev };
+    const countries = new Set(
+      ev.years.flatMap((y) => getCompaniesByYear(params.eventId, y.year).map((c) => c.country)),
+    ).size;
+    return { event: ev, countries };
   },
   head: ({ loaderData }) => ({
     meta: loaderData
@@ -22,7 +25,7 @@ export const Route = createFileRoute("/events/$eventId")({
 });
 
 function EventDetail() {
-  const { event } = Route.useLoaderData();
+  const { event, countries } = Route.useLoaderData();
 
   return (
     <PageShell>
@@ -72,10 +75,7 @@ function EventDetail() {
         <StatCard label="Companies" value={event.totalCompanies.toLocaleString()} />
         <StatCard label="Contacts" value={event.totalContacts.toLocaleString()} />
         <StatCard label="Industries" value={event.industries.length} />
-        <StatCard
-          label="Countries"
-          value={new Set(event.years.flatMap((y: any) => y.countries)).size || 12}
-        />
+        <StatCard label="Countries" value={countries} />
       </div>
 
       {/* Years */}
@@ -87,7 +87,7 @@ function EventDetail() {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {event.years.map((y: any, idx: number) => (
+          {event.years.map((y, idx) => (
             <motion.div
               key={y.year}
               initial={{ opacity: 0, y: 10 }}
@@ -107,7 +107,10 @@ function EventDetail() {
                 </div>
                 <div className="mt-6 space-y-2 text-sm">
                   <Row label="Companies" value={y.companyIds.length} />
-                  <Row label="Contacts" value={y.companyIds.length * 4} />
+                  <Row
+                    label="Contacts"
+                    value={getCompaniesByYear(event.slug, y.year).reduce((s, c) => s + c.contacts.length, 0)}
+                  />
                   <Row label="Countries" value={y.countries} />
                 </div>
               </Link>

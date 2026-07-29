@@ -16,6 +16,7 @@ function Dashboard() {
     { m: "May", v: 380 }, { m: "Jun", v: 520 }, { m: "Jul", v: 610 }, { m: "Aug", v: 580 },
   ];
   const byEvent = EVENTS.map((e) => ({ name: e.name.split(" ")[0], companies: e.totalCompanies }));
+  const totalAdded = trend.reduce((s, t) => s + t.v, 0);
 
   return (
     <PageShell>
@@ -39,7 +40,7 @@ function Dashboard() {
           <div className="mb-2 flex items-center justify-between">
             <div>
               <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Companies added</div>
-              <div className="text-2xl font-semibold">3,340 this year</div>
+              <div className="text-2xl font-semibold">{totalAdded.toLocaleString()} this year</div>
             </div>
             <div className="rounded-full bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground">+18.4%</div>
           </div>

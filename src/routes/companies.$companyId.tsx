@@ -106,7 +106,7 @@ function CompanyProfile() {
 
           <Section title="Event Participation">
             <ol className="relative space-y-4 border-l border-border pl-6">
-              {c.eventParticipation.map((p: any, i: number) => (
+              {c.eventParticipation.map((p, i) => (
                 <li key={i} className="relative">
                   <span className="absolute -left-[27px] top-1.5 grid h-3 w-3 place-items-center rounded-full bg-sky ring-4 ring-background" />
                   <div className="text-sm font-medium">{p.event} <span className="text-muted-foreground">· {p.year}</span></div>
@@ -143,7 +143,7 @@ function CompanyProfile() {
         <aside className="space-y-6">
           <Section title="Contacts">
             <div className="space-y-3">
-              {c.contacts.map((p: any) => (
+              {c.contacts.map((p) => (
                 <div key={p.id} className="rounded-2xl border border-border bg-card p-4">
                   <div className="flex items-center gap-3">
                     <div className="grid h-10 w-10 place-items-center rounded-full bg-secondary text-xs font-semibold">
@@ -174,7 +174,7 @@ function CompanyProfile() {
         </div>
         <div className="-mx-4 overflow-x-auto px-4 pb-2">
           <div className="flex gap-4">
-            {related.map((r: any) => (
+            {related.map((r) => (
               <Link
                 key={r.id}
                 to="/companies/$companyId"
