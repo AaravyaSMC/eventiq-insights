@@ -1,24 +1,36 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
-import { EVENTS, INDUSTRIES, COUNTRIES, getAllCompanies } from "@/lib/dummy-data";
+import { getEvents, getAllCompanies } from "@/lib/data";
 import { PageShell } from "@/components/page-shell";
 
+const topBy = (values: string[], limit: number) => {
+  const counts = new Map<string, number>();
+  for (const v of values) {
+    if (!v || v === "—") continue;
+    counts.set(v, (counts.get(v) ?? 0) + 1);
+  }
+  return Array.from(counts.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit)
+    .map(([name, value]) => ({ name, value }));
+};
+
 export const Route = createFileRoute("/analytics")({
+  loader: async () => {
+    const [events, companies] = await Promise.all([getEvents(), getAllCompanies()]);
+    return {
+      events,
+      industryData: topBy(companies.map((c) => c.industry), 8),
+      countryData: topBy(companies.map((c) => c.country), 12),
+    };
+  },
   component: Analytics,
   head: () => ({ meta: [{ title: "Analytics — EventIQ" }] }),
 });
 
 function Analytics() {
-  const companies = getAllCompanies();
-  const industryData = INDUSTRIES.map((i) => ({
-    name: i,
-    value: companies.filter((c) => c.industry === i).length,
-  }));
-  const countryData = COUNTRIES.map((c) => ({
-    name: c,
-    value: companies.filter((x) => x.country === c).length,
-  }));
+  const { events: EVENTS, industryData, countryData } = Route.useLoaderData();
   const eventData = EVENTS.map((e) => ({ name: e.name.split(" ")[0], contacts: e.totalContacts }));
 
   const COLORS = ["#0B2E6D", "#16B8E8", "#3A5DA9", "#78D6EF", "#0B2E6D80", "#16B8E880"];
@@ -32,9 +44,9 @@ function Analytics() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="rounded-3xl border border-border bg-card p-6 shadow-card">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="rounded-3xl border border-border bg-card p-4 shadow-card sm:p-6">
           <div className="mb-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Industry Distribution</div>
-          <div className="h-72">
+          <div className="h-60 sm:h-72">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie data={industryData} dataKey="value" innerRadius={60} outerRadius={100} paddingAngle={2}>
@@ -46,9 +58,9 @@ function Analytics() {
           </div>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="rounded-3xl border border-border bg-card p-6 shadow-card">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="rounded-3xl border border-border bg-card p-4 shadow-card sm:p-6">
           <div className="mb-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Contacts per Event</div>
-          <div className="h-72">
+          <div className="h-60 sm:h-72">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={eventData}>
                 <CartesianGrid stroke="var(--color-border)" strokeDasharray="3 3" vertical={false} />
@@ -61,9 +73,9 @@ function Analytics() {
           </div>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="rounded-3xl border border-border bg-card p-6 shadow-card lg:col-span-2">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="rounded-3xl border border-border bg-card p-4 shadow-card sm:p-6 lg:col-span-2">
           <div className="mb-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Companies by Country</div>
-          <div className="h-72">
+          <div className="h-60 sm:h-72">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={countryData}>
                 <CartesianGrid stroke="var(--color-border)" strokeDasharray="3 3" vertical={false} />

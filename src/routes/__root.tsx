@@ -12,6 +12,8 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { TopNav } from "@/components/top-nav";
+import { MobileNav } from "@/components/mobile-nav";
+import { AuthGate } from "@/components/auth-gate";
 
 function NotFoundComponent() {
   return (
@@ -75,12 +77,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
+      { name: "theme-color", content: "#0B2E6D" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+      { name: "apple-mobile-web-app-title", content: "EventIQ" },
       { title: "EventIQ — Event Intelligence Platform" },
       {
         name: "description",
         content:
-          "EventIQ by Datito7 — a centralized knowledge platform for every conference, summit, and event database.",
+          "EventIQ by SandMartin — a centralized knowledge platform for every conference, summit, and event database.",
       },
       { property: "og:title", content: "EventIQ — Event Intelligence Platform" },
       {
@@ -94,6 +100,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "" },
       {
@@ -127,16 +135,19 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="min-h-screen bg-background text-foreground">
-        <TopNav />
-        <Outlet />
-        <footer className="border-t border-border mt-20">
-          <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-2 px-4 py-8 text-xs text-muted-foreground sm:flex-row sm:items-center sm:px-6 lg:px-8">
-            <div>© {new Date().getFullYear()} Datito7 — EventIQ. Internal knowledge platform.</div>
-            <div>Built with intent · v1.0</div>
-          </div>
-        </footer>
-      </div>
+      <AuthGate>
+        <div className="min-h-screen bg-background pb-20 text-foreground md:pb-0">
+          <TopNav />
+          <Outlet />
+          <footer className="border-t border-border mt-20">
+            <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-2 px-4 py-8 text-xs text-muted-foreground sm:flex-row sm:items-center sm:px-6 lg:px-8">
+              <div>© {new Date().getFullYear()} SandMartin — EventIQ. Internal knowledge platform.</div>
+              <div>Built with intent · v1.0</div>
+            </div>
+          </footer>
+          <MobileNav />
+        </div>
+      </AuthGate>
     </QueryClientProvider>
   );
 }

@@ -1,32 +1,43 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
-import { EVENTS, STATS, getAllCompanies } from "@/lib/dummy-data";
+import { getEvents, getStats, getAllCompanies } from "@/lib/data";
 import { PageShell, StatCard } from "@/components/page-shell";
 import { LineChart, Line, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 
 export const Route = createFileRoute("/dashboard")({
+  loader: async () => {
+    const [events, stats, companies] = await Promise.all([getEvents(), getStats(), getAllCompanies()]);
+    // Real "companies by year": distinct companies participating in each year across all events.
+    const yearMap = new Map<number, Set<string>>();
+    events.forEach((e) =>
+      e.years.forEach((y) => {
+        const set = yearMap.get(y.year) ?? new Set<string>();
+        y.companyIds.forEach((id) => set.add(id));
+        yearMap.set(y.year, set);
+      }),
+    );
+    const byYear = Array.from(yearMap.entries())
+      .sort((a, b) => a[0] - b[0])
+      .map(([year, set]) => ({ year: String(year), companies: set.size }));
+    return { events, stats, recent: companies.slice(0, 6), byYear };
+  },
   component: Dashboard,
   head: () => ({ meta: [{ title: "Dashboard — EventIQ" }] }),
 });
 
 function Dashboard() {
-  const recent = getAllCompanies().slice(0, 6);
-  const trend = [
-    { m: "Jan", v: 240 }, { m: "Feb", v: 310 }, { m: "Mar", v: 280 }, { m: "Apr", v: 410 },
-    { m: "May", v: 380 }, { m: "Jun", v: 520 }, { m: "Jul", v: 610 }, { m: "Aug", v: 580 },
-  ];
+  const { events: EVENTS, stats: STATS, recent, byYear } = Route.useLoaderData();
   const byEvent = EVENTS.map((e) => ({ name: e.name.split(" ")[0], companies: e.totalCompanies }));
-  const totalAdded = trend.reduce((s, t) => s + t.v, 0);
 
   return (
     <PageShell>
-      <div className="mb-10">
+      <div className="mb-6 sm:mb-10">
         <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-sky">Overview</div>
         <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Dashboard</h1>
         <p className="mt-2 max-w-2xl text-sm text-muted-foreground">A live snapshot of the intelligence platform across every event, year, and organization.</p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-6">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
         <StatCard label="Total Events" value={STATS.totalEvents} />
         <StatCard label="Years" value={STATS.totalYears} />
         <StatCard label="Companies" value={STATS.totalCompanies.toLocaleString()} />
@@ -36,28 +47,27 @@ function Dashboard() {
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-3">
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="rounded-3xl border border-border bg-card p-6 shadow-card lg:col-span-2">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="rounded-3xl border border-border bg-card p-4 shadow-card sm:p-6 lg:col-span-2">
           <div className="mb-2 flex items-center justify-between">
             <div>
-              <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Companies added</div>
-              <div className="text-2xl font-semibold">{totalAdded.toLocaleString()} this year</div>
+              <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Companies by year</div>
+              <div className="text-2xl font-semibold">{STATS.totalCompanies.toLocaleString()} total</div>
             </div>
-            <div className="rounded-full bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground">+18.4%</div>
           </div>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={trend}>
+              <LineChart data={byYear}>
                 <CartesianGrid stroke="var(--color-border)" strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="m" stroke="var(--color-muted-foreground)" fontSize={12} tickLine={false} axisLine={false} />
-                <YAxis stroke="var(--color-muted-foreground)" fontSize={12} tickLine={false} axisLine={false} />
+                <XAxis dataKey="year" stroke="var(--color-muted-foreground)" fontSize={12} tickLine={false} axisLine={false} />
+                <YAxis stroke="var(--color-muted-foreground)" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
                 <Tooltip contentStyle={{ background: "var(--color-card)", border: "1px solid var(--color-border)", borderRadius: 12 }} />
-                <Line type="monotone" dataKey="v" stroke="var(--color-sky)" strokeWidth={2.5} dot={false} />
+                <Line type="monotone" dataKey="companies" stroke="var(--color-sky)" strokeWidth={2.5} dot={{ r: 3 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="rounded-3xl border border-border bg-card p-6 shadow-card">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="rounded-3xl border border-border bg-card p-4 shadow-card sm:p-6">
           <div className="mb-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Companies per event</div>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -75,7 +85,7 @@ function Dashboard() {
 
       {/* Popular events + recent */}
       <div className="mt-8 grid gap-6 lg:grid-cols-3">
-        <div className="rounded-3xl border border-border bg-card p-6 shadow-card">
+        <div className="rounded-3xl border border-border bg-card p-4 shadow-card sm:p-6">
           <div className="mb-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Popular Events</div>
           <div className="space-y-3">
             {EVENTS.slice(0, 5).map((e) => (
@@ -90,7 +100,7 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="rounded-3xl border border-border bg-card p-6 shadow-card lg:col-span-2">
+        <div className="rounded-3xl border border-border bg-card p-4 shadow-card sm:p-6 lg:col-span-2">
           <div className="mb-4 flex items-center justify-between">
             <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Recently Viewed</div>
             <Link to="/companies" className="text-xs font-medium text-sky hover:underline">View all</Link>

@@ -1,16 +1,21 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Moon, Sun, Search, Sparkles, X } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "motion/react";
 import { useDarkMode } from "@/hooks/use-dark-mode";
-import { searchGlobal } from "@/lib/dummy-data";
+import { searchGlobal } from "@/lib/data";
 import { cn } from "@/lib/utils";
+
+const EMPTY_RESULTS = { events: [], companies: [], industries: [], countries: [] };
 
 const NAV = [
   { to: "/dashboard", label: "Dashboard" },
   { to: "/", label: "Events" },
   { to: "/companies", label: "Companies" },
+  { to: "/contacts", label: "Contacts" },
   { to: "/analytics", label: "Analytics" },
+  { to: "/import", label: "Import" },
   { to: "/profile", label: "Profile" },
 ] as const;
 
@@ -21,7 +26,12 @@ export function TopNav() {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  const results = useMemo(() => searchGlobal(query), [query]);
+  const { data: results = EMPTY_RESULTS } = useQuery({
+    queryKey: ["search", query],
+    queryFn: () => searchGlobal(query),
+    enabled: query.trim().length > 0,
+    placeholderData: (prev) => prev,
+  });
 
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
@@ -41,7 +51,7 @@ export function TopNav() {
             <Sparkles className="h-4 w-4" />
           </div>
           <div className="hidden sm:block">
-            <div className="text-[15px] font-semibold tracking-tight">Datito7</div>
+            <div className="text-[15px] font-semibold tracking-tight">SandMartin</div>
             <div className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">EventIQ</div>
           </div>
         </Link>
@@ -118,7 +128,7 @@ function SearchResults({
   results,
   onSelect,
 }: {
-  results: ReturnType<typeof searchGlobal>;
+  results: Awaited<ReturnType<typeof searchGlobal>>;
   onSelect: () => void;
 }) {
   const empty =

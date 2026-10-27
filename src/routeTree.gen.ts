@@ -11,12 +11,18 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
+import { Route as CaptureRouteImport } from './routes/capture'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as ImportRouteImport } from './routes/import'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as CompaniesIndexRouteImport } from './routes/companies.index'
 import { Route as CompaniesCompanyIdRouteImport } from './routes/companies.$companyId'
+import { Route as CompaniesNewRouteImport } from './routes/companies.new'
+import { Route as ContactsIndexRouteImport } from './routes/contacts.index'
+import { Route as ContactsNewRouteImport } from './routes/contacts.new'
 import { Route as EventsEventIdRouteImport } from './routes/events.$eventId'
+import { Route as EventsNewRouteImport } from './routes/events.new'
 import { Route as EventsEventIdYearRouteImport } from './routes/events.$eventId_.$year'
 
 const IndexRoute = IndexRouteImport.update({
@@ -29,9 +35,19 @@ const AnalyticsRoute = AnalyticsRouteImport.update({
   path: '/analytics',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CaptureRoute = CaptureRouteImport.update({
+  id: '/capture',
+  path: '/capture',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ImportRoute = ImportRouteImport.update({
+  id: '/import',
+  path: '/import',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfileRoute = ProfileRouteImport.update({
@@ -54,9 +70,29 @@ const CompaniesCompanyIdRoute = CompaniesCompanyIdRouteImport.update({
   path: '/companies/$companyId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CompaniesNewRoute = CompaniesNewRouteImport.update({
+  id: '/companies/new',
+  path: '/companies/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactsIndexRoute = ContactsIndexRouteImport.update({
+  id: '/contacts/',
+  path: '/contacts/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactsNewRoute = ContactsNewRouteImport.update({
+  id: '/contacts/new',
+  path: '/contacts/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EventsEventIdRoute = EventsEventIdRouteImport.update({
   id: '/events/$eventId',
   path: '/events/$eventId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventsNewRoute = EventsNewRouteImport.update({
+  id: '/events/new',
+  path: '/events/new',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EventsEventIdYearRoute = EventsEventIdYearRouteImport.update({
@@ -68,35 +104,53 @@ const EventsEventIdYearRoute = EventsEventIdYearRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
+  '/capture': typeof CaptureRoute
   '/dashboard': typeof DashboardRoute
+  '/import': typeof ImportRoute
   '/profile': typeof ProfileRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/companies/$companyId': typeof CompaniesCompanyIdRoute
+  '/companies/new': typeof CompaniesNewRoute
+  '/contacts/new': typeof ContactsNewRoute
   '/events/$eventId': typeof EventsEventIdRoute
+  '/events/new': typeof EventsNewRoute
   '/companies/': typeof CompaniesIndexRoute
+  '/contacts/': typeof ContactsIndexRoute
   '/events/$eventId/$year': typeof EventsEventIdYearRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
+  '/capture': typeof CaptureRoute
   '/dashboard': typeof DashboardRoute
+  '/import': typeof ImportRoute
   '/profile': typeof ProfileRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/companies/$companyId': typeof CompaniesCompanyIdRoute
+  '/companies/new': typeof CompaniesNewRoute
+  '/contacts/new': typeof ContactsNewRoute
   '/events/$eventId': typeof EventsEventIdRoute
+  '/events/new': typeof EventsNewRoute
   '/companies': typeof CompaniesIndexRoute
+  '/contacts': typeof ContactsIndexRoute
   '/events/$eventId/$year': typeof EventsEventIdYearRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
+  '/capture': typeof CaptureRoute
   '/dashboard': typeof DashboardRoute
+  '/import': typeof ImportRoute
   '/profile': typeof ProfileRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/companies/$companyId': typeof CompaniesCompanyIdRoute
+  '/companies/new': typeof CompaniesNewRoute
+  '/contacts/new': typeof ContactsNewRoute
   '/events/$eventId': typeof EventsEventIdRoute
+  '/events/new': typeof EventsNewRoute
   '/companies/': typeof CompaniesIndexRoute
+  '/contacts/': typeof ContactsIndexRoute
   '/events/$eventId_/$year': typeof EventsEventIdYearRoute
 }
 export interface FileRouteTypes {
@@ -104,46 +158,70 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/analytics'
+    | '/capture'
     | '/dashboard'
+    | '/import'
     | '/profile'
     | '/sitemap.xml'
     | '/companies/$companyId'
+    | '/companies/new'
+    | '/contacts/new'
     | '/events/$eventId'
+    | '/events/new'
     | '/companies/'
+    | '/contacts/'
     | '/events/$eventId/$year'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/analytics'
+    | '/capture'
     | '/dashboard'
+    | '/import'
     | '/profile'
     | '/sitemap.xml'
     | '/companies/$companyId'
+    | '/companies/new'
+    | '/contacts/new'
     | '/events/$eventId'
+    | '/events/new'
     | '/companies'
+    | '/contacts'
     | '/events/$eventId/$year'
   id:
     | '__root__'
     | '/'
     | '/analytics'
+    | '/capture'
     | '/dashboard'
+    | '/import'
     | '/profile'
     | '/sitemap.xml'
     | '/companies/$companyId'
+    | '/companies/new'
+    | '/contacts/new'
     | '/events/$eventId'
+    | '/events/new'
     | '/companies/'
+    | '/contacts/'
     | '/events/$eventId_/$year'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AnalyticsRoute: typeof AnalyticsRoute
+  CaptureRoute: typeof CaptureRoute
   DashboardRoute: typeof DashboardRoute
+  ImportRoute: typeof ImportRoute
   ProfileRoute: typeof ProfileRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   CompaniesCompanyIdRoute: typeof CompaniesCompanyIdRoute
+  CompaniesNewRoute: typeof CompaniesNewRoute
+  ContactsNewRoute: typeof ContactsNewRoute
   EventsEventIdRoute: typeof EventsEventIdRoute
+  EventsNewRoute: typeof EventsNewRoute
   CompaniesIndexRoute: typeof CompaniesIndexRoute
+  ContactsIndexRoute: typeof ContactsIndexRoute
   EventsEventIdYearRoute: typeof EventsEventIdYearRoute
 }
 
@@ -163,11 +241,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AnalyticsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/capture': {
+      id: '/capture'
+      path: '/capture'
+      fullPath: '/capture'
+      preLoaderRoute: typeof CaptureRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/import': {
+      id: '/import'
+      path: '/import'
+      fullPath: '/import'
+      preLoaderRoute: typeof ImportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profile': {
@@ -198,11 +290,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CompaniesCompanyIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/companies/new': {
+      id: '/companies/new'
+      path: '/companies/new'
+      fullPath: '/companies/new'
+      preLoaderRoute: typeof CompaniesNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contacts/': {
+      id: '/contacts/'
+      path: '/contacts'
+      fullPath: '/contacts/'
+      preLoaderRoute: typeof ContactsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contacts/new': {
+      id: '/contacts/new'
+      path: '/contacts/new'
+      fullPath: '/contacts/new'
+      preLoaderRoute: typeof ContactsNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/events/$eventId': {
       id: '/events/$eventId'
       path: '/events/$eventId'
       fullPath: '/events/$eventId'
       preLoaderRoute: typeof EventsEventIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/events/new': {
+      id: '/events/new'
+      path: '/events/new'
+      fullPath: '/events/new'
+      preLoaderRoute: typeof EventsNewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/events/$eventId_/$year': {
@@ -218,12 +338,18 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnalyticsRoute: AnalyticsRoute,
+  CaptureRoute: CaptureRoute,
   DashboardRoute: DashboardRoute,
+  ImportRoute: ImportRoute,
   ProfileRoute: ProfileRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   CompaniesCompanyIdRoute: CompaniesCompanyIdRoute,
+  CompaniesNewRoute: CompaniesNewRoute,
+  ContactsNewRoute: ContactsNewRoute,
   EventsEventIdRoute: EventsEventIdRoute,
+  EventsNewRoute: EventsNewRoute,
   CompaniesIndexRoute: CompaniesIndexRoute,
+  ContactsIndexRoute: ContactsIndexRoute,
   EventsEventIdYearRoute: EventsEventIdYearRoute,
 }
 export const routeTree = rootRouteImport

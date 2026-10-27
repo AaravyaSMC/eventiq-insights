@@ -1,0 +1,17 @@
+# Netlify deployment for EventIQ (TanStack Start + Nitro).
+# Static assets are published from dist/; the SSR server is emitted as a
+# Netlify Function in .netlify/functions-internal/ by the Nitro netlify preset.
+#
+# Required environment variables (Site settings -> Environment variables):
+#   VITE_SUPABASE_URL          - Supabase project URL
+#   VITE_SUPABASE_ANON_KEY     - Supabase anon/publishable key
+#   SUPABASE_SERVICE_ROLE_KEY  - server-only, powers imports/writes
+#   ANTHROPIC_API_KEY          - server-only, powers card scanning + enrichment
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NITRO_PRESET = "netlify"
+  NODE_VERSION = "22"
